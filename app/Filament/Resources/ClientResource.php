@@ -21,6 +21,7 @@ class ClientResource extends Resource
     protected static ?string $model = Client::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    
 
     public static function form(Form $form): Form
     {
@@ -53,6 +54,9 @@ class ClientResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
                     ->badge(),
+                Tables\Columns\TextColumn::make('contacts_count')
+                    ->label('Contacts') 
+                    ->counts('contacts'),
             ])
             ->defaultSort('status', 'asc') 
             ->filters([
