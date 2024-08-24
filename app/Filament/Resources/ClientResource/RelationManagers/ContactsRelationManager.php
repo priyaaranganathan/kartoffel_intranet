@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Resources\ClientResource\RelationManagers;
 
 use Filament\Forms;
 use Filament\Tables;
@@ -8,21 +8,15 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use App\Enums\RecordStatus;
 use App\Models\ClientContact;
-use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
-use Filament\Forms\Components\BelongsToSelect;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Resources\ClientContactResource\Pages;
-use App\Filament\Resources\ClientContactResource\RelationManagers;
+use Filament\Resources\RelationManagers\RelationManager;
 
-class ClientContactResource extends Resource
+class ContactsRelationManager extends RelationManager
 {
-    protected static ?string $model = ClientContact::class;
+    protected static string $relationship = 'contacts';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    
-
-    public static function form(Form $form): Form
+    public function form(Form $form): Form
     {
         return $form
             ->schema([
@@ -36,20 +30,17 @@ class ClientContactResource extends Resource
                     ->Label('Contact Number')
                     ->numeric()
                     ->required(),
-                // BelongsToSelect::make('client_id')
-                //     ->relationship('client', 'name')
-                //     ->default(fn (?ClientContact $record) => $record?->client_id ?? request()->query('client_id'))
-                //     ->disabled(),
-                Forms\Components\Select::make('client_id')
+                Forms\Components\Select::make('client_id') 
                     ->relationship('client', 'name')
-                    ->default(fn (?ClientContact $record) => $record?->client_id ?? request()->query('client_id'))
+                    ->default(fn ($record) => $record?->client_id ?? static::getOwnerRecord()->id)
                     ->disabled()
-                    ->required(),
+                    ->required(), 
                 Forms\Components\Radio::make('is_primary_contact')
                     ->Label('Primary Contact?')
                     ->options([
                         "1" => 'Yes', "0"=> 'No'
                     ])
+                    ->default('0')
                     ->required(),
                 Forms\Components\Radio::make('status')
                     ->required()
@@ -57,29 +48,28 @@ class ClientContactResource extends Resource
             ]);
     }
 
-    public static function table(Table $table): Table
+    public function table(Table $table): Table
     {
         return $table
+            ->recordTitleAttribute('name')
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
+                ->searchable(),
                 Tables\Columns\TextColumn::make('email')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('contact')
                     ->label('Contact Number')
                     ->searchable(),
-                // Tables\Columns\TextColumn::make('client_id')
-                //     ->numeric()
-                //     ->sortable(),
                 Tables\Columns\IconColumn::make('is_primary_contact')
                     ->boolean(),
-                // Tables\Columns\IconColumn::make('status')
-                //     ->boolean(),
                 Tables\Columns\TextColumn::make('status')
                     ->badge(), 
             ])
             ->filters([
                 //
+            ])
+            ->headerActions([
+                Tables\Actions\CreateAction::make(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -90,12 +80,5 @@ class ClientContactResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
-    }
-
-    public static function getPages(): array
-    {
-        return [
-            'index' => Pages\ManageClientContacts::route('/'),
-        ];
     }
 }

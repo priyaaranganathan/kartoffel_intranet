@@ -17,6 +17,26 @@ class ClientContact extends Model
         'status' =>  RecordStatus::class,
     ];
 
+    public static function boot()
+    {
+        parent::boot();
+
+        static::saving(function ($contact) {
+            if ($contact->is_primary) {
+                // Ensure only one primary contact exists
+                static::where('client_id', $contact->client_id)
+                    ->where('id', '!=', $contact->id)
+                    ->update(['is_primary_contact' => false]);
+            }
+        });
+
+        static::deleting(function ($contact) {
+            if ($contact->is_primary) {
+                // Prevent deletion if contact is primary
+                throw new \Exception('Cannot delete a primary contact.');
+            }
+        });
+    }
 
     public function client(): BelongsTo
     {
