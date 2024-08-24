@@ -7,11 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class ClientContact extends Model
+class Project extends Model
 {
     use HasFactory;
-
-    protected $fillable = ['name', 'email','status','client_id','contact','is_primary_contact'];
+    protected $fillable = ['name', 'description','start_date','end_date','client_id','total_cost','status'];
 
     protected $casts = [
         'status' =>  RecordStatus::class,

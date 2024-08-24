@@ -61,7 +61,8 @@ class ClientResource extends Resource
             ])
             ->defaultSort('status', 'asc') 
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('status')
+                ->options(RecordStatus::class),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
