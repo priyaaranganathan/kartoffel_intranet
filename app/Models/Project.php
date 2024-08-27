@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\RecordStatus;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -20,5 +21,20 @@ class Project extends Model
     public function client(): BelongsTo
     {
         return $this->belongsTo(Client::class);
+    }
+
+    // public function requirements(): HasMany 
+    // {
+    //     return $this->hasMany(ProjectRequirement::class);
+    // }
+
+    public function requirements(): HasMany 
+    {
+        return $this->hasMany(Requirement::class);
+    }
+
+    public function milestones(): HasMany 
+    {
+        return $this->hasMany(Milestone::class);
     }
 }

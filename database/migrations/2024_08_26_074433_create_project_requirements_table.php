@@ -1,8 +1,9 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+use App\Enums\ActivityStatus;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
 {
@@ -11,15 +12,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('projects', function (Blueprint $table) {
+        Schema::create('project_requirements', function (Blueprint $table) {
             $table->id();
-            $table->char('name', length: 250);
+            $table->text('title');
             $table->text('description');
-            $table->foreignId('client_id')->constrained();
+            $table->foreignId('project_id')->nullable()->constrained();
             $table->dateTime('start_date');
             $table->dateTime('end_date');
-            $table->float('total_cost');
-            $table->boolean('status');
+            // $table->enum('status',);
+            $table->enum('status', array_column(ActivityStatus::cases(), 'value'));
             $table->softDeletes('deleted_at', precision: 0);
             $table->timestamps();
         });
@@ -30,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('projects');
+        Schema::dropIfExists('project_requirements');
     }
 };

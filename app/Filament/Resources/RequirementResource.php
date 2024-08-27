@@ -4,19 +4,19 @@ namespace App\Filament\Resources;
 
 use Filament\Forms;
 use Filament\Tables;
-use App\Models\Project;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
-use App\Enums\RecordStatus;
+use App\Models\Requirement;
+use App\Enums\ActivityStatus;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Resources\ProjectResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Resources\ProjectResource\RelationManagers;
+use App\Filament\Resources\RequirementResource\Pages;
+use App\Filament\Resources\RequirementResource\RelationManagers;
 
-class ProjectResource extends Resource
+class RequirementResource extends Resource
 {
-    protected static ?string $model = Project::class;
+    protected static ?string $model = Requirement::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -24,16 +24,14 @@ class ProjectResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required(),
+                Forms\Components\Textarea::make('title')
+                    ->required()
+                    ->columnSpanFull(),
                 Forms\Components\Textarea::make('description')
                     ->required()
                     ->columnSpanFull(),
-                // Forms\Components\TextInput::make('client_id')
-                //     ->required()
-                //     ->numeric(),
-                Forms\Components\Select::make('client_id') 
-                    ->relationship('client', 'name')
+                    Forms\Components\Select::make('project_id') 
+                    ->relationship('project', 'name')
                     ->searchable()
                     ->preload()
                     ->required(),
@@ -41,12 +39,10 @@ class ProjectResource extends Resource
                     ->required(),
                 Forms\Components\DateTimePicker::make('end_date')
                     ->required(),
-                Forms\Components\TextInput::make('total_cost')
+                Forms\Components\Select::make('status')
                     ->required()
-                    ->numeric(),
-                Forms\Components\Radio::make('status')
-                    ->required()
-                    ->options(RecordStatus::class)->default('active'),
+                    ->preload()
+                    ->options(ActivityStatus::class)->default('review')
             ]);
     }
 
@@ -54,10 +50,11 @@ class ProjectResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('client.name')
-                    ->numeric()
+                Tables\Columns\TextColumn::make('title')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('project.name')
+                    ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('start_date')
                     ->dateTime()
@@ -65,12 +62,11 @@ class ProjectResource extends Resource
                 Tables\Columns\TextColumn::make('end_date')
                     ->dateTime()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('total_cost')
-                    ->numeric()
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('status')
                     ->badge(), 
             ])
+            ->defaultSort('created_at', 'desc')
+            ->defaultGroup('project.name')
             ->filters([
                 //
             ])
@@ -87,7 +83,6 @@ class ProjectResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RelationManagers\RequirementRelationManager::class,
             RelationManagers\MilestonesRelationManager::class
         ];
     }
@@ -95,9 +90,9 @@ class ProjectResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListProjects::route('/'),
-            'create' => Pages\CreateProject::route('/create'),
-            'edit' => Pages\EditProject::route('/{record}/edit'),
+            'index' => Pages\ListRequirements::route('/'),
+            'create' => Pages\CreateRequirement::route('/create'),
+            'edit' => Pages\EditRequirement::route('/{record}/edit'),
         ];
     }
 }
