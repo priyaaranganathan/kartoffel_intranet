@@ -4,11 +4,13 @@ namespace App\Filament\Resources\RequirementResource\RelationManagers;
 
 use Filament\Forms;
 use Filament\Tables;
+use App\Models\Project;
 use Filament\Forms\Form;
 use App\Models\Milestone;
 use Filament\Tables\Table;
 use App\Models\Requirement;
 use App\Enums\ActivityStatus;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -21,41 +23,31 @@ class MilestonesRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                // Forms\Components\Select::make('project_id')
-                //     ->relationship('project', 'name')
-                //     ->reactive()
-                //     ->default(fn ($record) => $record?->project_id ?? static::getOwnerRecord()->project_id)
-                //     ->disabled()
-                //     ->afterStateUpdated(fn ($state, callable $set) => $set('requirement_id', null)) // Reset requirement_id when project_id changes
-                //     ->required(),
-                // Forms\Components\Select::make('requirement_id') 
-                //     ->relationship('requirement', 'title')
-                //     ->default(fn ($record) => $record?->requirement_id ?? static::getOwnerRecord()->id)
-                //     ->disabled()
-                //     ->required(),
-                Forms\Components\Select::make('project_id')
-                    ->relationship('project', 'name')
-                    ->reactive()
-                    ->default(fn ($record) => $record?->project_id ?? static::getOwnerRecord()->project_id ) // Set default value
-                    ->disabled() // Make the field non-editable
-                    ->required(), // Ensure the field is required
 
-                // Requirement ID Field
+                Forms\Components\Select::make('project_id')
+                ->options(Project::all()->pluck('name', 'id')->toArray())
+                ->default(fn (?Milestone $record) => $record ? $record->project_id : static::getOwnerRecord()->project_id)
+                ->disabled(),
+
                 Forms\Components\Select::make('requirement_id')
-                    ->options(fn (callable $get) => 
-                        Requirement::where('project_id', $get('project_id'))->pluck('title', 'id')
-                    )
-                    ->default(static::getOwnerRecord()->id)
-                    ->disabled() // Disable if no project is selected
-                    ->required(), // Ensure the field is required
+                ->options(Requirement::all()->pluck('title', 'id')->toArray())
+                ->default(fn (?Milestone $record) => $record ? $record->requirement_id : static::getOwnerRecord()->id)
+                ->disabled(),
+                Forms\Components\Hidden::make('project_id')
+                ->default(fn (?Milestone $record) => $record ? $record->project_id : static::getOwnerRecord()->project_id),
+
+                Forms\Components\Hidden::make('requirement_id')
+                ->default(fn (?Milestone $record) => $record ? $record->requirement_id : static::getOwnerRecord()->id),
+
+
                 Forms\Components\Textarea::make('title')
                     ->required()
                     ->columnSpanFull(),
-                Forms\Components\DateTimePicker::make('start_date')
+                Forms\Components\DatePicker::make('start_date')
                     ->required(),
-                Forms\Components\DateTimePicker::make('due_date')
+                Forms\Components\DatePicker::make('due_date')
                     ->required(),
-                Forms\Components\DateTimePicker::make('payment_date')
+                Forms\Components\DatePicker::make('payment_date')
                     ->required(),
                 Forms\Components\TextInput::make('payment_amount')
                     ->required()
@@ -118,4 +110,13 @@ class MilestonesRelationManager extends RelationManager
                 ]),
             ]);
     }
+
+    // public static function store(Milestone $milestone): void
+    // {
+    //     Log::info('Creating milestone with data:', request()->all());
+    //     dd(request()->all());
+        
+    //     $milestone->project_id = request()->input('project_id', $milestone->project_id);
+    //     $milestone->requirement_id = request()->input('requirement_id', $milestone->requirement_id);
+    // }
 }

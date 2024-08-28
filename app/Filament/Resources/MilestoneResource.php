@@ -9,6 +9,7 @@ use App\Models\Milestone;
 use Filament\Tables\Table;
 use App\Enums\ActivityStatus;
 use Filament\Resources\Resource;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\MilestoneResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -27,11 +28,11 @@ class MilestoneResource extends Resource
                 Forms\Components\Textarea::make('title')
                     ->required()
                     ->columnSpanFull(),
-                Forms\Components\DateTimePicker::make('start_date')
+                Forms\Components\DatePicker::make('start_date')
                     ->required(),
-                Forms\Components\DateTimePicker::make('due_date')
+                Forms\Components\DatePicker::make('due_date')
                     ->required(),
-                Forms\Components\DateTimePicker::make('payment_date')
+                Forms\Components\DatePicker::make('payment_date')
                     ->required(),
                 Forms\Components\TextInput::make('payment_amount')
                     ->required()
@@ -112,4 +113,18 @@ class MilestoneResource extends Resource
             'edit' => Pages\EditMilestone::route('/{record}/edit'),
         ];
     }
+
+    // public static function store(Milestone $milestone): void
+    // {
+    //     Log::info('Creating milestone with data:', request()->all());
+    //     dd(request()->all());
+
+    //     $milestone->project_id = request()->input('project_id', $milestone->project_id);
+    //     $milestone->requirement_id = request()->input('requirement_id', $milestone->requirement_id);
+        
+    //     $milestone->save();  // Ensure you save the model
+    // }
+
+   
+
 }

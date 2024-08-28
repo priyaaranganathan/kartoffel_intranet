@@ -4,16 +4,17 @@ namespace App\Models;
 
 use App\Enums\RecordStatus;
 use Illuminate\Database\Eloquent\Model;
-use PhpParser\Node\Expr\AssignOp\Concat;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Spatie\Permission\Traits\HasRoles;
 
 class Employee extends Model
 {
     use HasFactory;
+    use HasRoles;
 
-    protected $fillable = ['first_name', 'last_name','department_id','reporting_manager_id','email','contact','status'];
+    protected $fillable = ['first_name', 'last_name','role_id','department_id','reporting_manager_id','email','contact','status'];
 
     protected $casts = [
         'status' =>  RecordStatus::class,

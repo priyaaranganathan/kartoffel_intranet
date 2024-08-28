@@ -27,26 +27,18 @@ class MilestonesRelationManager extends RelationManager
                     ->disabled()
                     ->afterStateUpdated(fn ($state, callable $set) => $set('requirement_id', null)) // Reset requirement_id when project_id changes
                     ->required(),
-                 Forms\Components\Select::make('requirement_id')
-                    ->options(function (callable $get) {
-                        $projectId = $get('project_id');
-                        return Requirement::where('project_id', $projectId)->pluck('title', 'id');
-                    })
-                    ->disabled(fn ($get) => empty($get('project_id'))),
                 Forms\Components\Textarea::make('title')
                     ->required()
                     ->columnSpanFull(),
-                Forms\Components\DateTimePicker::make('start_date')
+                Forms\Components\DatePicker::make('start_date')
                     ->required(),
-                Forms\Components\DateTimePicker::make('due_date')
+                Forms\Components\DatePicker::make('due_date')
                     ->required(),
-                Forms\Components\DateTimePicker::make('payment_date')
+                Forms\Components\DatePicker::make('payment_date')
                     ->required(),
                 Forms\Components\TextInput::make('payment_amount')
                     ->required()
                     ->numeric(),
-                // Forms\Components\TextInput::make('requirement_id')
-                //     ->numeric(),
                 Forms\Components\Select::make('status')
                     ->required()
                     ->preload()

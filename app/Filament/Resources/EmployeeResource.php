@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\EmployeeResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\EmployeeResource\RelationManagers;
+use Spatie\Permission\Models\Role;
 
 class EmployeeResource extends Resource
 {
@@ -38,8 +39,22 @@ class EmployeeResource extends Resource
                 Forms\Components\Select::make('department_id') 
                     ->relationship('department', 'name')
                     ->required(),
+                Forms\Components\Select::make('role_id') 
+                    ->preload()
+                    ->required()
+                    ->relationship('roles', 'name'), 
                 Forms\Components\Select::make('reporting_manager_id') 
-                    ->relationship('manager', 'first_name'),
+                    // ->relationship('manager', 'first_name')
+                    ->label('Reporting Manager')
+                    ->relationship('manager', 'first_name', function ($query, $get) {
+                        return $query->whereHas('roles', function ($q) {
+                                $q->where('name', 'Project Leader'); // Replace with your specific role name
+                            })
+                            ->when($get('id'), function ($query, $id) {
+                                return $query->where('id', '!=', $id); // Exclude the current record if it exists
+                            });
+                    })
+                    ->required(),
                 Forms\Components\Radio::make('status')
                     ->required()
                     ->options(RecordStatus::class)->default('active'),
@@ -59,6 +74,9 @@ class EmployeeResource extends Resource
                 Tables\Columns\TextColumn::make('contact')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('department.name')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('roles.name')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('manager.first_name')

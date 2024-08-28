@@ -17,6 +17,7 @@ return new class extends Migration
             $table->char('last_name', length: 250);
             $table->char('email', length: 250)->unique();
             $table->char('contact', length: 250)->unique();
+            $table->foreignId('role_id')->nullable()->constrained();
             $table->foreignId('department_id')->nullable()->constrained();
             $table->unsignedBigInteger('reporting_manager_id')->nullable(); // Foreign key for reporting manager
             $table->boolean('status');
