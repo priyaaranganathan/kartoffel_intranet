@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use Filament\Forms;
 use Filament\Tables;
 use App\Models\Project;
+use App\Models\Employee;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use App\Enums\RecordStatus;
@@ -29,9 +30,6 @@ class ProjectResource extends Resource
                 Forms\Components\Textarea::make('description')
                     ->required()
                     ->columnSpanFull(),
-                // Forms\Components\TextInput::make('client_id')
-                //     ->required()
-                //     ->numeric(),
                 Forms\Components\Select::make('client_id') 
                     ->relationship('client', 'name')
                     ->searchable()
@@ -44,6 +42,20 @@ class ProjectResource extends Resource
                 Forms\Components\TextInput::make('total_cost')
                     ->required()
                     ->numeric(),
+                Forms\Components\Select::make('projectLeader_id')
+                    ->label('Project Leader')
+                    ->relationship('projectLeader', 'first_name', function ($query, $get) {
+                        return $query->whereHas('roles', function ($q) {
+                            $q->where('name', 'Project Leader'); // Replace with your specific role name
+                        });
+                    })
+                    ->required(),
+                Forms\Components\Select::make('teamMembers')
+                    ->label('Team Members')
+                  
+                    ->relationship('teamMembers', 'first_name')
+                    ->multiple()
+                    ->options(Employee::all()->pluck('first_name', 'id')),
                 Forms\Components\Radio::make('status')
                     ->required()
                     ->options(RecordStatus::class)->default('active'),
@@ -70,6 +82,10 @@ class ProjectResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
                     ->badge(), 
+                Tables\Columns\TextColumn::make('projectLeaderFullName')
+                    ->label('Project Leader')
+                    ->searchable()
+                    ->sortable()
             ])
             ->filters([
                 //

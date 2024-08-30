@@ -20,15 +20,20 @@ class Employee extends Model
         'status' =>  RecordStatus::class,
     ];
 
-    // Method to get the full name of the reporting manager
-    public function getReportingManagerFullName()
+    public function getFullNameAttribute()
     {
-        if ($this->reportingManager) {
-            return $this->reportingManager->first_name . ' ' . $this->reportingManager->last_name;
-        }
-        
-        return null; // or an empty string, or whatever default value you prefer
+        return $this->first_name . ' ' . $this->last_name;
     }
+    
+    // // Method to get the full name of the reporting manager
+    // public function getReportingManagerFullName()
+    // {
+    //     if ($this->reportingManager) {
+    //         return $this->reportingManager->first_name . ' ' . $this->reportingManager->last_name;
+    //     }
+        
+    //     return null; // or an empty string, or whatever default value you prefer
+    // }
 
     public function department(): BelongsTo
     {
@@ -38,5 +43,10 @@ class Employee extends Model
     public function manager(): HasOne
     {
         return $this->hasOne(Employee::class,'first_name');
+    }
+
+    public function projects()
+    {
+        return $this->belongsToMany(Project::class, 'project_user', 'user_id', 'project_id');
     }
 }

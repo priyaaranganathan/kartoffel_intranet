@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Project extends Model
 {
     use HasFactory;
-    protected $fillable = ['name', 'description','start_date','end_date','client_id','total_cost','status'];
+    protected $fillable = ['name', 'description','start_date','end_date','client_id','total_cost','status','project_leader_id'];
 
     protected $casts = [
         'status' =>  RecordStatus::class,
@@ -36,5 +36,20 @@ class Project extends Model
     public function milestones(): HasMany 
     {
         return $this->hasMany(Milestone::class);
+    }
+
+    public function projectLeader()
+    {
+        return $this->belongsTo(Employee::class, 'project_leader_id');
+    }
+
+    public function getProjectLeaderFullNameAttribute()
+    {
+        return $this->projectLeader ? $this->projectLeader->full_name : 'N/A';
+    }
+
+    public function teamMembers()
+    {
+        return $this->belongsToMany(Employee::class, 'project_user', 'project_id', 'employee_id');
     }
 }
