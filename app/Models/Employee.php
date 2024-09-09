@@ -49,4 +49,11 @@ class Employee extends Model
     {
         return $this->belongsToMany(Project::class, 'project_user', 'user_id', 'project_id');
     }
+
+    public function tasks()
+    {
+        return $this->belongsToMany(Task::class, 'task_assignments')
+                    ->withPivot('task_category_id', 'status')
+                    ->withTimestamps();
+    }
 }

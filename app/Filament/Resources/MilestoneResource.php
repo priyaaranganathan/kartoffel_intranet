@@ -4,9 +4,11 @@ namespace App\Filament\Resources;
 
 use Filament\Forms;
 use Filament\Tables;
+use App\Models\Project;
 use Filament\Forms\Form;
 use App\Models\Milestone;
 use Filament\Tables\Table;
+use App\Models\Requirement;
 use App\Enums\ActivityStatus;
 use Filament\Resources\Resource;
 use Illuminate\Support\Facades\Log;
@@ -37,10 +39,25 @@ class MilestoneResource extends Resource
                 Forms\Components\TextInput::make('payment_amount')
                     ->required()
                     ->numeric(),
-                Forms\Components\TextInput::make('project_id')
-                    ->numeric(),
-                Forms\Components\TextInput::make('requirement_id')
-                    ->numeric(),
+                Forms\Components\Select::make('project_id')
+                    ->label('Project')
+                    ->relationship('project', 'name')
+                    ->preload()
+                    ->required()
+                    ->reactive() // Make this field reactive
+                    ->afterStateUpdated(function ($state, callable $set) {
+                        $requirements = Requirement::where('project_id', $state)->pluck('title', 'id');
+                        $set('requirement_id', null); // Reset the requirement_id field
+                        $set('requirements', $requirements); // Update the requirements list
+                    })
+                    ->default(fn ($record) => $record->project_id ?? request()->get('project_id')),
+
+                Forms\Components\Select::make('requirement_id')
+                    ->label('Requirement')
+                    ->options(fn (callable $get) => $get('requirements') ?? [])
+                    ->preload()
+                    ->required()
+                    ->default(fn ($record) => $record->requirement_id ?? request()->get('requirement_id')),
                 Forms\Components\Select::make('status')
                     ->required()
                     ->preload()
@@ -59,13 +76,13 @@ class MilestoneResource extends Resource
                 Tables\Columns\TextColumn::make('title')
                 ->sortable(),
                 Tables\Columns\TextColumn::make('start_date')
-                    ->dateTime()
+                    ->date('d/m/Y')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('due_date')
-                    ->dateTime()
+                    ->date('d/m/Y')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('payment_date')
-                    ->dateTime()
+                    ->date('d/m/Y')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('payment_amount')
                     ->numeric()
@@ -80,6 +97,9 @@ class MilestoneResource extends Resource
             ->defaultGroup('project.name')
             ->filters([
                 //
+            ])
+            ->headerActions([
+                Tables\Actions\CreateAction::make(),
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([ 
@@ -113,18 +133,4 @@ class MilestoneResource extends Resource
             'edit' => Pages\EditMilestone::route('/{record}/edit'),
         ];
     }
-
-    // public static function store(Milestone $milestone): void
-    // {
-    //     Log::info('Creating milestone with data:', request()->all());
-    //     dd(request()->all());
-
-    //     $milestone->project_id = request()->input('project_id', $milestone->project_id);
-    //     $milestone->requirement_id = request()->input('requirement_id', $milestone->requirement_id);
-        
-    //     $milestone->save();  // Ensure you save the model
-    // }
-
-   
-
 }
