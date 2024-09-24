@@ -14,7 +14,7 @@ class Employee extends Model
     use HasFactory;
     use HasRoles;
 
-    protected $fillable = ['first_name', 'last_name','role_id','department_id','reporting_manager_id','email','contact','status'];
+    protected $fillable = ['first_name', 'last_name','role_id','department_id','reporting_manager_id','email','contact','status','passsword'];
 
     protected $casts = [
         'status' =>  RecordStatus::class,

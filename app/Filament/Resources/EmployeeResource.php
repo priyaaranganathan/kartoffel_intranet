@@ -20,6 +20,7 @@ class EmployeeResource extends Resource
     protected static ?string $model = Employee::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationGroup = 'Organisation';
 
     public static function form(Form $form): Form
     {
@@ -33,6 +34,11 @@ class EmployeeResource extends Resource
                     ->email()
                     ->unique(ignoreRecord:true)
                     ->required(),
+                Forms\Components\TextInput::make('password')
+                    ->label('Password')
+                    ->required(fn ($record) => is_null($record)) 
+                    ->password()
+                    ->hidden(fn ($record) => $record !== null),
                 Forms\Components\TextInput::make('contact')
                     ->unique(ignoreRecord:true)
                     ->required(),
@@ -53,8 +59,7 @@ class EmployeeResource extends Resource
                             ->when($get('id'), function ($query, $id) {
                                 return $query->where('id', '!=', $id); // Exclude the current record if it exists
                             });
-                    })
-                    ->required(),
+                    }),
                 Forms\Components\Radio::make('status')
                     ->required()
                     ->options(RecordStatus::class)->default('active'),
@@ -109,6 +114,38 @@ class EmployeeResource extends Resource
             'index' => Pages\ListEmployees::route('/'),
             'create' => Pages\CreateEmployee::route('/create'),
             'edit' => Pages\EditEmployee::route('/{record}/edit'),
+        ];
+    }
+
+    public static function getActions(): array
+    {
+        return [
+            Tables\Actions\Action::make('updatePassword')
+                ->label('Update Password')
+                ->action(function (Employee $record) {
+                    // Open the password update modal
+                    return [
+                        'modal' => true,
+                        'form' => [
+                            Forms\Components\TextInput::make('password')
+                                ->label('New Password')
+                                ->required()
+                                ->password(),
+                            Forms\Components\TextInput::make('password_confirmation')
+                                ->label('Confirm Password')
+                                ->required()
+                                ->password(),
+                        ],
+                        'action' => function ($data) use ($record) {
+                            // Update the password logic
+                            $record->password = bcrypt($data['password']);
+                            $record->save();
+
+                            // Return a success message
+                            return 'Password updated successfully!';
+                        },
+                    ];
+                }),
         ];
     }
 }

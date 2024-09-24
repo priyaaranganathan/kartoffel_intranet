@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('task_categories', function (Blueprint $table) {
+        Schema::create('deliverables', function (Blueprint $table) {
             $table->id();
-            $table->char('name', length: 250);
+            $table->string('name');
             $table->text('description')->nullable();
-            $table->boolean('status');
-            $table->softDeletes('deleted_at', precision: 0);
+            $table->foreignId('project_id')->constrained(); // Deliverable linked to a project
+            $table->foreignId('requirement_id')->nullable()->constrained(); // Optionally linked to a requirement
+            $table->foreignId('milestone_id')->nullable()->constrained(); // Optionally linked to a milestone
             $table->timestamps();
         });
     }
@@ -26,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('task_categories');
+        Schema::dropIfExists('deliverables');
     }
 };

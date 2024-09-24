@@ -28,6 +28,11 @@ class Requirement extends Model
         return $this->hasMany(Milestone::class);
     }
 
+    public function deliverables()
+    {
+        return $this->hasMany(Deliverable::class);
+    }
+
     public function tasks()
     {
         return $this->hasMany(Task::class);

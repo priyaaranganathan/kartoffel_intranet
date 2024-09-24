@@ -11,6 +11,7 @@ use Filament\Tables\Table;
 use App\Enums\RecordStatus;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
+use RelationManagers\TasksRelationManager;
 use App\Filament\Resources\ProjectResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\ProjectResource\RelationManagers;
@@ -20,6 +21,9 @@ class ProjectResource extends Resource
     protected static ?string $model = Project::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationGroup = 'Projects';
+    protected static ?int $navigationSort = 1;
+
 
     public static function form(Form $form): Form
     {
@@ -27,9 +31,7 @@ class ProjectResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('name')
                     ->required(),
-                Forms\Components\Textarea::make('description')
-                    ->required()
-                    ->columnSpanFull(),
+               
                 Forms\Components\Select::make('client_id') 
                     ->relationship('client', 'name')
                     ->searchable()
@@ -56,6 +58,9 @@ class ProjectResource extends Resource
                     ->relationship('teamMembers', 'first_name')
                     ->multiple()
                     ->options(Employee::all()->pluck('first_name', 'id')),
+                Forms\Components\Textarea::make('description')
+                    ->required()
+                    ->columnSpanFull(),
                 Forms\Components\Radio::make('status')
                     ->required()
                     ->options(RecordStatus::class)->default('active'),
@@ -95,9 +100,9 @@ class ProjectResource extends Resource
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                // Tables\Actions\BulkActionGroup::make([
+                //     Tables\Actions\DeleteBulkAction::make(),
+                // ]),
             ]);
     }
 
@@ -105,7 +110,9 @@ class ProjectResource extends Resource
     {
         return [
             RelationManagers\RequirementRelationManager::class,
-            RelationManagers\MilestonesRelationManager::class
+            RelationManagers\MilestonesRelationManager::class,
+            RelationManagers\DeliverablesRelationManager::class,
+            RelationManagers\TasksRelationManager::class
         ];
     }
 

@@ -23,6 +23,9 @@ class MilestoneResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    protected static ?string $navigationGroup = 'Projects';
+    protected static ?int $navigationSort = 3;
+
     public static function form(Form $form): Form
     {
         return $form
@@ -69,10 +72,10 @@ class MilestoneResource extends Resource
     {
         return $table
             ->columns([
-                // Tables\Columns\TextColumn::make('project.name')
-                // ->sortable(),
-            Tables\Columns\TextColumn::make('requirement.title')
+            Tables\Columns\TextColumn::make('project.name')
                 ->sortable(),
+            // Tables\Columns\TextColumn::make('requirement.title')
+            //     ->sortable(),
                 Tables\Columns\TextColumn::make('title')
                 ->sortable(),
                 Tables\Columns\TextColumn::make('start_date')
@@ -94,7 +97,7 @@ class MilestoneResource extends Resource
                     ->badge(),
             ])
             ->defaultSort('created_at', 'desc')
-            ->defaultGroup('project.name')
+            ->defaultGroup('requirement.title')
             ->filters([
                 //
             ])
@@ -112,9 +115,9 @@ class MilestoneResource extends Resource
                 ])
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                // Tables\Actions\BulkActionGroup::make([
+                //     Tables\Actions\DeleteBulkAction::make(),
+                // ]),
             ]);
     }
 

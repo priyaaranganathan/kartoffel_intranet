@@ -17,6 +17,8 @@ class EditOrganisation extends Page implements HasForms
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static string $view = 'filament.pages.edit-organisation';
+    protected static ?string $navigationGroup = 'Organisation';
+    protected static bool $shouldRegisterNavigation = false;
 
     public function mount(): void 
     {

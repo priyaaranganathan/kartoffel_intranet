@@ -14,6 +14,8 @@ class Task extends Model
         'description',
         'requirement_id',
         'project_id',
+        'milestone_id',
+        'deliverable_id',
         'due_date',
         'start_date',
         'status',
@@ -63,6 +65,12 @@ class Task extends Model
         return $this->belongsTo(Requirement::class);
     }
 
+    public function milestone()
+    {
+        return $this->belongsTo(Milestone::class);
+    }
+
+
     public function assignments()
     {
         return $this->hasMany(TaskAssignment::class);
@@ -76,5 +84,10 @@ class Task extends Model
     public function getTotalAssignmentsAttribute()
     {
         return $this->assignments()->count();
+    }
+
+    public function deliverable()
+    {
+        return $this->belongsTo(Deliverable::class);
     }
 }

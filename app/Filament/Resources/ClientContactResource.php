@@ -20,6 +20,8 @@ class ClientContactResource extends Resource
     protected static ?string $model = ClientContact::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationGroup = 'Clients';
+
     
 
     public static function form(Form $form): Form

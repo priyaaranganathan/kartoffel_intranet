@@ -17,13 +17,18 @@ class Milestone extends Model
         'status' =>  ActivityStatus::class,
     ];
 
+    public function project(): BelongsTo
+    {
+        return $this->belongsTo(Project::class);
+    }
+
     public function requirement(): BelongsTo
     {
         return $this->belongsTo(Requirement::class);
     }
 
-    public function project(): BelongsTo
+    public function deliverables()
     {
-        return $this->belongsTo(Project::class);
+        return $this->hasMany(Deliverable::class);
     }
 }
