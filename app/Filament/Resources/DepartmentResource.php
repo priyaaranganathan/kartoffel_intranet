@@ -30,11 +30,6 @@ class DepartmentResource extends Resource
                 Forms\Components\TextInput::make('description')->required(),
                 Forms\Components\Select::make('organisation_id') 
                     ->relationship('organisation', 'name')->default(1), 
-                // Forms\Components\Radio::make('status')
-                //     ->options([
-                //         'active' => 'Active',
-                //         'inactive' => 'In Active'
-                //     ])->default('active'),
                 Forms\Components\Radio::make('status')
                     ->options(RecordStatus::class)->default('active'),
                 

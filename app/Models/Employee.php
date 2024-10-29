@@ -14,11 +14,24 @@ class Employee extends Model
     use HasFactory;
     use HasRoles;
 
-    protected $fillable = ['first_name', 'last_name','role_id','department_id','reporting_manager_id','email','contact','status','passsword'];
+    protected $fillable = [
+        'first_name', 
+        'last_name',
+        'role_id',
+        'department_id',
+        'reporting_manager_id',
+        'email',
+        'contact',
+        'status',
+        'password'
+    ];
 
     protected $casts = [
         'status' =>  RecordStatus::class,
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
     ];
+
 
     public function getFullNameAttribute()
     {
@@ -55,5 +68,29 @@ class Employee extends Model
         return $this->belongsToMany(Task::class, 'task_assignments')
                     ->withPivot('task_category_id', 'status')
                     ->withTimestamps();
+    }
+
+    // // Relationship with department
+    // public function department()
+    // {
+    //     return $this->belongsTo(Department::class);
+    // }
+
+    // Relationship with designation
+    public function designation()
+    {
+        return $this->belongsTo(Designation::class);
+    }
+
+    // Relationship with reporting manager
+    // public function manager()
+    // {
+    //     return $this->belongsTo(Employee::class, 'manager_id');
+    // }
+
+    // Relationship with subordinates
+    public function subordinates()
+    {
+        return $this->hasMany(Employee::class, 'manager_id');
     }
 }

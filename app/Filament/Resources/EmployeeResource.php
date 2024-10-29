@@ -49,9 +49,35 @@ class EmployeeResource extends Resource
                     ->preload()
                     ->required()
                     ->relationship('roles', 'name'), 
+                // Forms\Components\Select::make('reporting_manager_id')
+                //     ->relationship('manager', fn ($query) => $query->select('id', 'first_name', 'last_name'))
+                //                         ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->first_name} {$record->last_name}")
+                //                         ->options(function (Forms\Get $get, ?Employee $record) {
+                //                             $currentEmployeeDesignation = $record ? $record->designation : null;
+                //                             if (!$currentEmployeeDesignation && $get('designation_id')) {
+                //                                 $currentEmployeeDesignation = \App\Models\Designation::find($get('designation_id'));
+                //                             }
+                //                             if (!$currentEmployeeDesignation) {
+                //                                 return [];
+                //                             }
+                //                             $currentLevel = $currentEmployeeDesignation->level;
+                //                             return Employee::whereHas('designation', function ($query) use ($currentLevel) {
+                //                                 $query->where('level', $currentLevel - 1);
+                //                             })
+                //                             ->when($record, function ($query) use ($record) {
+                //                                 return $query->where('id', '!=', $record->id);
+                //                             })
+                //                             ->get()
+                //                             ->mapWithKeys(function ($employee) {
+                //                                 return [$employee->id => "{$employee->first_name} {$employee->last_name}"];
+                //                             });
+                //                         })
+                //                         ->searchable()
+                //                         ->preload(),
                 Forms\Components\Select::make('reporting_manager_id') 
                     // ->relationship('manager', 'first_name')
                     ->label('Reporting Manager')
+                    ->preload()
                     ->relationship('manager', 'first_name', function ($query, $get) {
                         return $query->whereHas('roles', function ($q) {
                                 $q->where('name', 'Project Leader'); // Replace with your specific role name

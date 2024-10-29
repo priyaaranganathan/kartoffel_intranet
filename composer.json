@@ -10,7 +10,8 @@
         "filament/filament": "^3.2",
         "laravel/breeze": "^2.1",
         "laravel/framework": "^11.9",
-        "laravel/tinker": "^2.9"
+        "laravel/tinker": "^2.9",
+        "spatie/laravel-activitylog": "*"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.13",

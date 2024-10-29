@@ -20,4 +20,16 @@ class Department extends Model
     {
         return $this->belongsTo(Organisation::class);
     }
+
+    // Many-to-many relationship with Designation
+    public function designations()
+    {
+        return $this->belongsToMany(Designation::class, 'department_designation');
+    }
+
+    // Relationship with employees
+    public function employees()
+    {
+        return $this->hasMany(Employee::class);
+    }
 }
