@@ -9,7 +9,7 @@ use Filament\Support\Contracts\HasColor;
 enum RecordStatus: string implements HasLabel, HasColor, HasIcon
 {
     case ACTIVE = 'active';
-    case INACTIVE = 'in active';
+    case INACTIVE = 'inactive';
 
  
     public function getLabel(): ?string

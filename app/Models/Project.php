@@ -45,7 +45,7 @@ class Project extends Model
 
     public function projectLeader()
     {
-        return $this->belongsTo(Employee::class, 'project_leader_id');
+        return $this->belongsTo(User::class, 'project_leader_id');
     }
 
     public function getProjectLeaderFullNameAttribute()
@@ -55,7 +55,7 @@ class Project extends Model
 
     public function teamMembers()
     {
-        return $this->belongsToMany(Employee::class, 'project_user', 'project_id', 'employee_id');
+        return $this->belongsToMany(User::class, 'project_user', 'project_id', 'employee_id');
     }
 
     public function tasks()

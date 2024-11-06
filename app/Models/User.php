@@ -4,9 +4,12 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Filament\Panel;
+use App\Models\Department;
+use App\Enums\RecordStatus;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
@@ -24,6 +27,12 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'last_name',
+        'role_id',
+        'department_id',
+        'reporting_manager_id',
+        'phonenumber',
+        'status',
     ];
 
     /**
@@ -44,10 +53,17 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
+            'status' =>  RecordStatus::class,
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
     }
+
+    public function getFullNameAttribute()
+    {
+        return $this->name . ' ' . $this->last_name;
+    }
+    
 
     public function canAccessPanel(Panel $panel): bool
     {
@@ -57,5 +73,25 @@ class User extends Authenticatable
     public function organisation(): HasOne
     {
         return $this->hasOne(Organisation::class);
+    }
+
+    public function department(): BelongsTo
+    {
+        return $this->belongsTo(Department::class);
+    }
+
+    public function manager(): HasOne
+    {
+        return $this->hasOne(User::class,'name');
+    }
+
+    public function projects()
+    {
+        return $this->belongsToMany(Project::class, 'project_user', 'user_id', 'project_id');
+    }
+
+    public function designation()
+    {
+        return $this->belongsTo(Designation::class);
     }
 }

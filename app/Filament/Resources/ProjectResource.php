@@ -46,7 +46,7 @@ class ProjectResource extends Resource
                     ->numeric(),
                 Forms\Components\Select::make('projectLeader_id')
                     ->label('Project Leader')
-                    ->relationship('projectLeader', 'first_name', function ($query, $get) {
+                    ->relationship('projectLeader', 'name', function ($query, $get) {
                         return $query->whereHas('roles', function ($q) {
                             $q->where('name', 'Project Leader'); // Replace with your specific role name
                         });
@@ -55,9 +55,9 @@ class ProjectResource extends Resource
                 Forms\Components\Select::make('teamMembers')
                     ->label('Team Members')
                   
-                    ->relationship('teamMembers', 'first_name')
+                    ->relationship('teamMembers', 'name')
                     ->multiple()
-                    ->options(Employee::all()->pluck('first_name', 'id')),
+                    ->options(Employee::all()->pluck('name', 'id')),
                 Forms\Components\Textarea::make('description')
                     ->required()
                     ->columnSpanFull(),

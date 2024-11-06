@@ -35,14 +35,14 @@ return [
             'view_any',
             'create',
             'update',
-            'restore',
-            'restore_any',
+            // 'restore',
+            // 'restore_any',
             'replicate',
-            'reorder',
+            // 'reorder',
             'delete',
             'delete_any',
-            'force_delete',
-            'force_delete_any',
+            // 'force_delete',
+            // 'force_delete_any',
         ],
 
         'page' => 'page',
@@ -83,7 +83,7 @@ return [
     ],
 
     'register_role_policy' => [
-        'enabled' => false,
+        'enabled' => true,
     ],
 
 ];

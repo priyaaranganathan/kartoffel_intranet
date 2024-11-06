@@ -24,20 +24,20 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        TextInput::configureUsing(function (TextInput $textInput) {
-            $textInput->inlineLabel();
-        });
-        Select::configureUsing(function (Select $select) {
-            $select->inlineLabel();
-        });
-        DatePicker::configureUsing(function (DatePicker $datePicker) {
-            $datePicker->inlineLabel();
-        });
-        Toggle::configureUsing(function (Toggle $toggle) {
-            $toggle->inlineLabel();
-        });
-        Radio::configureUsing(function (Radio $radio) {
-            $radio->inlineLabel();
-        });
+        // TextInput::configureUsing(function (TextInput $textInput) {
+        //     $textInput->inlineLabel();
+        // });
+        // Select::configureUsing(function (Select $select) {
+        //     $select->inlineLabel();
+        // });
+        // DatePicker::configureUsing(function (DatePicker $datePicker) {
+        //     $datePicker->inlineLabel();
+        // });
+        // Toggle::configureUsing(function (Toggle $toggle) {
+        //     $toggle->inlineLabel();
+        // });
+        // Radio::configureUsing(function (Radio $radio) {
+        //     $radio->inlineLabel();
+        // });
     }
 }
